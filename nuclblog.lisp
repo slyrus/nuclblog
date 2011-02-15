@@ -128,6 +128,7 @@ links for this blog."))
    (trackbacks :initarg :trackbacks :accessor blog-entry-trackbacks :initform nil)))
 
 (defgeneric read-blog-entries (blog &key path))
+(defgeneric blog-entry-display (blog entry))
 
 (defmethod shared-initialize :after ((blog blog) slot-names &rest initargs)
   (declare (ignore slot-names initargs))

@@ -58,7 +58,15 @@
                                                 blog (blog-entry-category entry))
                                                (str (blog-entry-category entry)))))))))
           (:div :class "nuclblog-entry-contents"
-                (str (blog-entry-contents entry)))
+                (str (with-output-to-string (str)
+		       (cl-markdown:markdown 
+			(reduce (lambda (x y) (concatenate 'string x y))
+				(with-input-from-string (in (blog-entry-contents entry))
+				  (loop for line = (read-line in nil :eof)
+				     while (not (eq line :eof))
+				     collect line)))
+			:format :html
+			:stream str))))
           (:div :class "nuclblog-entry-nav"
                 (when (hunchentoot-auth:session-realm-user-authenticated-p (blog-realm blog))
                   (htm (:a :href (make-edit-entry-url blog entry) "edit")
@@ -82,7 +90,16 @@
       (:|item|
         (:|title| (str (blog-entry-title entry)))
         (:|link| (str (make-full-entry-url blog entry)))
-        (:|description| (str (escape-string (blog-entry-contents entry))))
+        (:|description| (escape-string 
+			 (str (with-output-to-string (str)
+				(cl-markdown:markdown 
+				 (reduce (lambda (x y) (concatenate 'string x y))
+					 (with-input-from-string (in (blog-entry-contents entry))
+					   (loop for line = (read-line in nil :eof)
+				     while (not (eq line :eof))
+				     collect line)))
+				 :format :html
+			:stream str)))))
         (:|pubDate| (str (hunchentoot::rfc-1123-date
                           (blog-entry-time entry))))
         (:|guid| (str (make-full-entry-url blog entry))))))
@@ -143,6 +160,9 @@
         (with-html
           (:p "Not Logged in.")))))
 
+(defmethod blog-entry-display (blog entry)
+  (entry-html blog entry))
+
 (defun blog-display (blog &key id)
   (with-blog-page
       blog
@@ -150,7 +170,7 @@
     (if (and id (numberp id))
         (let ((entry (get-entry id blog)))
           (if entry
-              (entry-html blog entry)
+              (blog-entry-display blog entry)
               (with-html
                 (:p "Invalid entry."))))
         (with-html
