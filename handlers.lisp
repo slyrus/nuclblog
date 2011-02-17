@@ -215,7 +215,7 @@
                (:p (str (format nil "Created new blog entry by ~A in ~A:"
                                 user category)))
                (:h2 (str title))
-               (:p (str content))))
+               (:p (str (markdown* content)))))
            (with-html
              (:p (:form :method :post
                         "Category: "
