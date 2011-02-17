@@ -30,6 +30,17 @@
 
 (in-package :nuclblog)
 
+(defun markdown* (source)
+  (with-output-to-string (str)
+    (cl-markdown:markdown 
+     (reduce (lambda (x y) (concatenate 'string x y))
+	     (with-input-from-string (in source)
+	       (loop for line = (read-line in nil :eof)
+		  while (not (eq line :eof))
+		  collect line)))
+     :format :html
+     :stream str)))
+
 (defun entry-html (blog entry)
   "Outputs html for a blog entry."
   (with-html
@@ -58,15 +69,7 @@
                                                 blog (blog-entry-category entry))
                                                (str (blog-entry-category entry)))))))))
           (:div :class "nuclblog-entry-contents"
-                (str (with-output-to-string (str)
-		       (cl-markdown:markdown 
-			(reduce (lambda (x y) (concatenate 'string x y))
-				(with-input-from-string (in (blog-entry-contents entry))
-				  (loop for line = (read-line in nil :eof)
-				     while (not (eq line :eof))
-				     collect line)))
-			:format :html
-			:stream str))))
+                (str (markdown* (blog-entry-contents entry))))
           (:div :class "nuclblog-entry-nav"
                 (when (hunchentoot-auth:session-realm-user-authenticated-p (blog-realm blog))
                   (htm (:a :href (make-edit-entry-url blog entry) "edit")
@@ -265,7 +268,7 @@
                   (:p (str (format nil "updated new blog entry by ~A in ~A:"
                                    user category)))
                   (:h2 (str title))
-                  (:p (str content))))
+                  (:p (str (markdown* content)))))
                (edit-error
                 (with-html
                   (:p "Entry editing error!")))

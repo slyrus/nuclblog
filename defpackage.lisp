@@ -40,5 +40,5 @@
            #:footer
 
            #:define-blog-handlers
-           #:blog-entries))
-
+           #:blog-entries
+           #:blog-realm))
