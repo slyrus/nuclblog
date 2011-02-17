@@ -93,16 +93,9 @@
       (:|item|
         (:|title| (str (blog-entry-title entry)))
         (:|link| (str (make-full-entry-url blog entry)))
-        (:|description| (escape-string 
-			 (str (with-output-to-string (str)
-				(cl-markdown:markdown 
-				 (reduce (lambda (x y) (concatenate 'string x y))
-					 (with-input-from-string (in (blog-entry-contents entry))
-					   (loop for line = (read-line in nil :eof)
-				     while (not (eq line :eof))
-				     collect line)))
-				 :format :html
-			:stream str)))))
+        (:|description| (str
+			 (escape-string 
+			  (markdown* (blog-entry-contents entry)))))
         (:|pubDate| (str (hunchentoot::rfc-1123-date
                           (blog-entry-time entry))))
         (:|guid| (str (make-full-entry-url blog entry))))))
