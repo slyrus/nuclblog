@@ -31,7 +31,7 @@
 (asdf:defsystem nuclblog-demo
   :name "nuclblog-demo"
   :author "Cyrus Harmon <ch-lisp@bobobeach.com>"
-  :depends-on (:hunchentoot :cl-who :ch-asdf :nuclblog :hunchentoot-vhost)
+  :depends-on (:hunchentoot :cl-who :ch-asdf :nuclblog)
   :components
   ((:module
     :demo
