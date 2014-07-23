@@ -34,10 +34,10 @@
   (if (ssl-p) "https" "http"))
 
 (defun make-full-root-url (blog)
-  (concatenate-url (get-protocol) "://" (host) "" (blog-url-root blog)))
+  (concatenate-url (get-protocol) "://" (blog-hostname blog) "" (blog-url-root blog)))
 
 (defun make-full-entry-url (blog entry)
-  (concatenate-url (get-protocol) "://" (host) "" (blog-url-root blog)
+  (concatenate-url (get-protocol) "://" (blog-hostname blog) "" (blog-url-root blog)
                    "/display?id="
                      (url-encode
                       (princ-to-string (blog-entry-number entry)))))
@@ -69,7 +69,8 @@
 (defmethod blog-login-url ((blog blog))
   (if (blog-use-ssl-p blog)
       (multiple-value-bind (host)
-          (parse-host-name-and-port (host))
+          (or (blog-hostname blog)
+	      (parse-host-name-and-port (host)))
         (format nil "https://~A~@[:~A~]~A/login"
                 host
                 (blog-ssl-port blog)

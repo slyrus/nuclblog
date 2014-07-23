@@ -68,6 +68,10 @@ pages for this blog.")
                :initform nil
                :documentation "A list of the categories of the
 possible categories for entries in this blog.")
+   (hostname :initarg :hostname
+             :accessor blog-hostname
+             :documentation "The hostname for this blog. Prepended to
+the suffixes of various blog-related URLs")
    (url-root :initarg :url-root
              :accessor blog-url-root
              :documentation "The URL for the root of this
