@@ -358,7 +358,7 @@ those are established here."
       (with-unique-names (uri-handler uri%)
         `(progn
            (pushnew ,blog *blog-dispatch-blogs*)
-           (flet ((handler ,(list blog '&key key-args)
+           (flet ((handler ,(list* blog '&key key-args)
                     (hunchentoot-auth:authorized-page
                      ((blog-realm blog) user password
                       :ssl-port (blog-ssl-port blog)
