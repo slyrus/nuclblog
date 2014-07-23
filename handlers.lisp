@@ -41,6 +41,11 @@
      :format :html
      :stream str)))
 
+(defmethod entry-contents-html (blog entry)
+  (with-html
+    (:div :class "nuclblog-entry-contents"
+	(str (markdown* (blog-entry-contents entry))))))
+
 (defun entry-html (blog entry)
   "Outputs html for a blog entry."
   (with-html
@@ -59,7 +64,6 @@
                               " revised at: "
                               (str (hunchentoot::rfc-1123-date
                                     (blog-entry-revised-time entry)))))))
-                
                 (let ((user (blog-entry-user entry)))
                   (when user
                     (htm (:div :class "nuclblog-entry-user"
@@ -68,8 +72,7 @@
                                                (make-archives-url
                                                 blog (blog-entry-category entry))
                                                (str (blog-entry-category entry)))))))))
-          (:div :class "nuclblog-entry-contents"
-                (str (markdown* (blog-entry-contents entry))))
+          (entry-contents-html blog entry)
           (:div :class "nuclblog-entry-nav"
                 (when (hunchentoot-auth:session-realm-user-authenticated-p (blog-realm blog))
                   (htm (:a :href (make-edit-entry-url blog entry) "edit")
@@ -134,13 +137,19 @@
 (defmethod check-password ((blog blog) user password)
   (hunchentoot-auth:check-password (blog-realm blog) user password))
 
+(defmethod blog-index-entry-display (blog entry)
+  (entry-html blog entry))
+
+(defmethod blog-index-display (blog &key (start 0) (end 10))
+  (loop for entry in (sorted-blog-entries blog)
+       for i from start below end
+       do (blog-index-entry-display blog entry)))
+
 (defun blog-main (blog)
   (with-blog-page
         blog
         (blog-title blog)
-    (loop for entry in (sorted-blog-entries blog)
-       for i below 10
-       do (entry-html blog entry))))
+    (blog-index-display blog)))
 
 (defun blog-status (blog)
   (with-blog-page
