@@ -253,7 +253,6 @@ handlers. This should be added to the hunchentoot:*dispatch-table*.")
 (defparameter *login-page-function* 'ht-auth::login-page)
 
 (defmethod blog-dispatch (request (blog authorized-blog))
-  (declare (optimize (debug 3)))
   (let ((handler (call-next-method)))
     (when (and handler (blog-realm blog)) 
       (let ((realm (blog-realm blog))
@@ -359,9 +358,7 @@ those are established here."
       (with-unique-names (uri-handler uri%)
         `(progn
            (pushnew ,blog *blog-dispatch-blogs*)
-           (flet ((handler ,(cons blog '&key key-args)
-                    (print (cons :user user) *debug-io*)
-                    (print (cons :password password) *debug-io*)
+           (flet ((handler ,(list blog '&key key-args)
                     (hunchentoot-auth:authorized-page
                      ((blog-realm blog) user password
                       :ssl-port (blog-ssl-port blog)
