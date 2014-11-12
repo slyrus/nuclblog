@@ -205,6 +205,7 @@
   (hunchentoot-auth:authorized-page
      ((blog-realm blog)
       :ssl-port (blog-ssl-port blog)
+      :use-ssl (blog-use-ssl-p blog)
       :login-page-function (lambda ()
                              (blog-login-page blog user password)))
      (with-blog-page
@@ -246,6 +247,7 @@
     (hunchentoot-auth:authorized-page
      ((blog-realm blog)
       :ssl-port (blog-ssl-port blog)
+      :use-ssl (blog-use-ssl-p blog)
       :login-page-function (lambda ()
                              (blog-login-page blog user password)))
      (let ((edited)
@@ -303,6 +305,7 @@
   (hunchentoot-auth:authorized-page
    ((blog-realm blog)
     :ssl-port (blog-ssl-port blog)
+    :use-ssl (blog-use-ssl-p blog)
     :login-page-function (lambda ()
                            (blog-login-page blog user password)))
    (let ((deleted))
@@ -323,6 +326,7 @@
   (hunchentoot-auth:authorized-page
    ((blog-realm blog)
     :ssl-port (blog-ssl-port blog)
+    :use-ssl (blog-use-ssl-p blog)
     :login-page-function (lambda ()
                            (blog-login-page blog user password)))
    (with-blog-page
